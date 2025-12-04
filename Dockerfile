@@ -8,6 +8,7 @@ WORKDIR /app/client
 RUN npm install
 
 COPY client/ ./
+# This builds to ../server/webapp (which is /app/server/webapp)
 RUN npm run build
 
 # Build the Go server
@@ -22,8 +23,8 @@ ENV DOCKER=1
 # Copy server code
 COPY server/. server/.
 
-# Copy built webapp from previous stage - name it 'webapp' as the Go code expects
-COPY --from=webapp-builder /app/client/dist ./webapp
+# Copy built webapp from previous stage - Angular builds to /app/server/webapp
+COPY --from=webapp-builder /app/server/webapp ./server/webapp
 
 RUN mkdir -p /app/data && \
     apk --no-cache --no-progress --virtual .build add go && \
